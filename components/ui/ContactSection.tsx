@@ -2,6 +2,11 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
+import emailjs from "@emailjs/browser";
+
+const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || "";
+const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || "";
+const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || "";
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({
@@ -9,12 +14,35 @@ export default function ContactSection() {
     email: "",
     message: "",
   });
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSent(true);
-    setTimeout(() => setSent(false), 3000);
+    if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) return;
+
+    setStatus("sending");
+
+    try {
+      if (EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID && EMAILJS_PUBLIC_KEY) {
+        await emailjs.send(
+          EMAILJS_SERVICE_ID,
+          EMAILJS_TEMPLATE_ID,
+          {
+            from_name: formData.name,
+            from_email: formData.email,
+            message: formData.message,
+            to_name: "Dan Nguyen",
+          },
+          EMAILJS_PUBLIC_KEY
+        );
+      }
+      setStatus("sent");
+      setFormData({ name: "", email: "", message: "" });
+      setTimeout(() => setStatus("idle"), 3000);
+    } catch {
+      setStatus("error");
+      setTimeout(() => setStatus("idle"), 3000);
+    }
   };
 
   return (
@@ -197,7 +225,7 @@ export default function ContactSection() {
                 whileTap={{ scale: 0.98 }}
                 className="w-full py-4 rounded-xl bg-gradient-to-r from-[#6c63ff] to-[#a855f7] text-white font-medium transition-all"
               >
-                {sent ? "Message Sent! ✓" : "Send Message →"}
+                {status === "sending" ? "Sending..." : status === "sent" ? "Message Sent! ✓" : status === "error" ? "Failed to send ✗" : "Send Message →"}
               </motion.button>
             </motion.form>
           </div>

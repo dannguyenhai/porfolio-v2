@@ -110,6 +110,19 @@ export default function HeroSection({ onNavigate }: HeroSectionProps) {
             >
               Contact Me
             </motion.button>
+            <motion.a
+              href="/Nguyen-Hai-Dan-CV.pdf"
+              download="Nguyen-Hai-Dan-CV.pdf"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-8 py-3 rounded-full border border-[#6c63ff]/40 text-[#6c63ff] hover:bg-[#6c63ff]/10 hover:border-[#6c63ff] transition-all backdrop-blur-sm flex items-center gap-2"
+            >
+              <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 15V3m0 12-4-4m4 4 4-4" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M2 17l.621 2.485A2 2 0 0 0 4.561 21h14.878a2 2 0 0 0 1.94-1.515L22 17" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Download CV
+            </motion.a>
           </motion.div>
         </div>
       </div>
